@@ -33,14 +33,9 @@ class MnistDataloader(object):
             magic, size, rows, cols = struct.unpack(">IIII", file.read(16))
             if magic != 2051:
                 raise ValueError('Magic number mismatch, expected 2051, got {}'.format(magic))
-            image_data = array("B", file.read())        
-        images = []
-        for i in range(size):
-            images.append([0] * rows * cols)
-        for i in range(size):
-            img = np.array(image_data[i * rows * cols:(i + 1) * rows * cols])
-            img = img.reshape(28, 28)
-            images[i][:] = img            
+            image_data = array("B", file.read())
+
+        images = np.array(image_data, dtype=np.uint8).reshape(size, rows, cols)
         
         return images, labels
             
