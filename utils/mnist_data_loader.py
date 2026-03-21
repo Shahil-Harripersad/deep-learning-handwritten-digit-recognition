@@ -9,6 +9,10 @@ training_labels_filepath = join(input_path, 'train-labels-idx1-ubyte/train-label
 test_images_filepath = join(input_path, 't10k-images-idx3-ubyte/t10k-images-idx3-ubyte')
 test_labels_filepath = join(input_path, 't10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte')
 
+def load_mnist_data():
+    mnist_dataloader = MnistDataloader(training_images_filepath, training_labels_filepath, test_images_filepath, test_labels_filepath)
+    return mnist_dataloader.load_data()
+
 class MnistDataloader(object):
     def __init__(self, training_images_filepath,training_labels_filepath,
                  test_images_filepath, test_labels_filepath):

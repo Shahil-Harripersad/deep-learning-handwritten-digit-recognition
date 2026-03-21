@@ -1,28 +1,20 @@
 from nn.neural_network import Neuron
-from utils.mnist_data_loader import MnistDataloader
+from utils.mnist_data_loader import load_mnist_data
+from utils.utils import flatten, one_hot_encode, softmax, cross_entropy
 from os.path import join
 import numpy as np
 
 
 def main():
-    input_path = 'data'
-    training_images_filepath = join(input_path, 'train-images-idx3-ubyte/train-images-idx3-ubyte')
-    training_labels_filepath = join(input_path, 'train-labels-idx1-ubyte/train-labels-idx1-ubyte')
-    test_images_filepath = join(input_path, 't10k-images-idx3-ubyte/t10k-images-idx3-ubyte')
-    test_labels_filepath = join(input_path, 't10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte')
-    mnist_dataloader = MnistDataloader(training_images_filepath, training_labels_filepath, test_images_filepath, test_labels_filepath)
-    (x_train, y_train), (x_test, y_test) = mnist_dataloader.load_data()
+    (x_train, y_train), (x_test, y_test) = load_mnist_data()
     print(f"Training set: {len(x_train)} samples, Test set: {len(x_test)} samples")
 
-    # flatten each image to 1d vector of size 784
-    x_train = np.array(x_train).reshape(-1, 28*28)
-    x_test = np.array(x_test).reshape(-1, 28*28)
+    input = flatten(x_train[0])
+    label = y_train[0]
+    true_labels = one_hot_encode(label)
+    print(f"True label: {true_labels}")
 
-    # single neuron
-    output = np.dot(x_train[0], np.random.rand(28*28)) + np.random.rand()
-    print(f"Label: {y_train[0]}, Output: {output}")
-
-    # layer of neurons
+    # create layer of neurons
     layer = []
     for _ in range(10):
         weights = np.random.rand(28*28)
@@ -30,8 +22,18 @@ def main():
         layer.append(Neuron(weights, bias))
 
     # feedforward through the layer
-    outputs = [neuron.feedforward(x_train[0]) for neuron in layer]
-    print(f"Label: {y_train[0]}, Outputs: {outputs}")
+    outputs = [neuron.feedforward(input) for neuron in layer]
+
+    # use softmax to convert outputs to probabilities
+    probabilities = softmax(outputs)
+
+    # prediction
+    prediction = np.argmax(probabilities)
+
+    # calculate loss
+    loss = cross_entropy(probabilities, true_labels)
+
+    print(f"Label: {label}\n Probabilities: {probabilities}\n Prediction: {prediction}\n Loss: {loss}")
 
 
 if __name__ == "__main__":
