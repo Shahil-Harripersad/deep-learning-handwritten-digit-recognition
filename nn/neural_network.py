@@ -5,7 +5,6 @@ class Neuron:
         self.weights = weights
         self.bias = bias
 
-    # activation function
     def feedforward(self, inputs):
         total = np.dot(self.weights, inputs) + self.bias
         return total

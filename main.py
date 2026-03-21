@@ -31,9 +31,10 @@ def main():
     prediction = np.argmax(probabilities)
 
     # calculate loss
-    loss = cross_entropy(probabilities, true_labels)
+    loss = cross_entropy(true_labels, probabilities)
 
     print(f"Label: {label}\n Probabilities: {probabilities}\n Prediction: {prediction}\n Loss: {loss}")
+    print(f"probability of correct class: {probabilities[label]}")
 
 
 if __name__ == "__main__":

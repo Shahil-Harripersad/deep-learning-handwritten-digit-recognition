@@ -17,6 +17,5 @@ def softmax(x):
 
 
 def cross_entropy(y_true, y_pred):
-    y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)  # Clip predictions for numerical stability
-    loss = -np.sum(y_true * np.log(y_pred))     # Calculate the loss for each sample/class and sum
-    return loss / y_true.shape[0]               # Return the average loss
+    y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
+    return -np.sum(y_true * np.log(y_pred))
