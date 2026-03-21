@@ -1,5 +1,7 @@
 import numpy as np
 
+from utils.utils import softmax
+
 class Neuron:
     def __init__(self, weights, bias):
         self.weights = weights
@@ -19,4 +21,6 @@ class Layer:
         outputs = []
         for neuron in self.neurons:
             outputs.append(neuron.feedforward(inputs))
-        return outputs
+        probabilities = softmax(outputs)
+        prediction = np.argmax(probabilities)
+        return probabilities, prediction

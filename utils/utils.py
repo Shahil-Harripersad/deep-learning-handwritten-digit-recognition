@@ -1,6 +1,10 @@
 import numpy as np
 
 
+def normalize(image):
+    return image / 255.0
+
+
 def flatten(image):
     return np.array(image).reshape(-1)
 
