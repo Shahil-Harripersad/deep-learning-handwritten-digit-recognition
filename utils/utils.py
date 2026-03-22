@@ -33,23 +33,33 @@ def relu_derivative(values):
     return (values > 0).astype(float)
 
 
-def plot_training_metrics(losses, correct_class_probabilities):
+def save_training_plot(losses, accuracies, plot_path):
     import matplotlib.pyplot as plt
 
     epochs = np.arange(1, len(losses) + 1)
 
-    plt.figure(figsize=(10, 5))
-    plt.plot(epochs, losses, label="Loss", linewidth=2)
-    plt.plot(
+    figure, loss_axis = plt.subplots(figsize=(10, 5))
+    accuracy_axis = loss_axis.twinx()
+
+    loss_line = loss_axis.plot(epochs, losses, color="tab:blue", label="Loss", linewidth=2)
+    accuracy_line = accuracy_axis.plot(
         epochs,
-        correct_class_probabilities,
-        label="Prob Correct Class",
+        accuracies,
+        color="tab:orange",
+        label="Accuracy",
         linewidth=2,
     )
-    plt.xlabel("Epoch")
-    plt.ylabel("Value")
-    plt.title("Training Metrics Over Epochs")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.show()
+
+    loss_axis.set_xlabel("Epoch")
+    loss_axis.set_ylabel("Loss", color="tab:blue")
+    accuracy_axis.set_ylabel("Accuracy", color="tab:orange")
+    loss_axis.set_title("Training Loss and Accuracy")
+    loss_axis.grid(True, alpha=0.3)
+
+    lines = loss_line + accuracy_line
+    labels = [line.get_label() for line in lines]
+    loss_axis.legend(lines, labels, loc="center right")
+
+    figure.tight_layout()
+    figure.savefig(plot_path)
+    plt.close(figure)

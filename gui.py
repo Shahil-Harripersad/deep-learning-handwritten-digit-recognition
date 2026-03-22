@@ -8,7 +8,7 @@ from nn.neural_network import NeuralNetwork
 INPUT_SIZE = 28 * 28
 HIDDEN_SIZE = 64
 OUTPUT_SIZE = 10
-MODEL_PATH = Path("model") / "model.npz"
+MODEL_PATH = Path("outputs") / "model.npz"
 CANVAS_SIZE = 280
 GRID_SIZE = 28
 CELL_SIZE = CANVAS_SIZE // GRID_SIZE

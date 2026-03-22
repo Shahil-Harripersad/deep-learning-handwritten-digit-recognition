@@ -10,7 +10,7 @@ from utils.utils import (
     normalize,
     one_hot_encode,
     cross_entropy,
-    plot_training_metrics,
+    save_training_plot,
 )
 
 LEARNING_RATE = 0.01
@@ -18,8 +18,9 @@ EPOCHS = 10
 INPUT_SIZE = 28 * 28
 HIDDEN_SIZE = 64
 OUTPUT_SIZE = 10
-MODEL_DIRECTORY = Path("model")
-MODEL_PATH = MODEL_DIRECTORY / "model.npz"
+OUTPUTS_DIRECTORY = Path("outputs")
+MODEL_PATH = OUTPUTS_DIRECTORY / "model.npz"
+PLOT_PATH = OUTPUTS_DIRECTORY / "training_plot.png"
 
 def prepare_inputs(images, labels):
     inputs = []
@@ -50,12 +51,12 @@ def evaluate_model(network, test_inputs):
 
 def train_model(network, training_inputs):
     losses = []
-    correct_class_probabilities = []
+    accuracies = []
 
     for epoch in range(EPOCHS):
         print(f"Epoch {epoch + 1}")
         epoch_loss = 0.0
-        epoch_correct_class_probability = 0.0
+        correct_predictions = 0
         shuffled_indices = np.random.permutation(len(training_inputs))
 
         for index in shuffled_indices:
@@ -65,18 +66,20 @@ def train_model(network, training_inputs):
             probabilities, prediction = network.train(image, true_labels, LEARNING_RATE)
             loss = cross_entropy(true_labels, probabilities)
             epoch_loss += loss
-            epoch_correct_class_probability += probabilities[label]
+
+            if prediction == label:
+                correct_predictions += 1
 
         average_loss = epoch_loss / len(training_inputs)
-        average_correct_class_probability = epoch_correct_class_probability / len(training_inputs)
+        average_accuracy = correct_predictions / len(training_inputs)
         losses.append(average_loss)
-        correct_class_probabilities.append(average_correct_class_probability)
+        accuracies.append(average_accuracy)
         print(
             f"Average loss: {average_loss:.4f} | "
-            f"Average prob correct class: {average_correct_class_probability:.4f}"
+            f"Average accuracy: {average_accuracy:.4f}"
         )
 
-    plot_training_metrics(losses, correct_class_probabilities)
+    return losses, accuracies
 
 def build_network():
     return NeuralNetwork(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE)
@@ -105,10 +108,12 @@ def main():
 
     if args.train:
         training_inputs = prepare_inputs(x_train, y_train)
-        train_model(network, training_inputs)
-        MODEL_DIRECTORY.mkdir(exist_ok=True)
+        losses, accuracies = train_model(network, training_inputs)
+        OUTPUTS_DIRECTORY.mkdir(exist_ok=True)
         network.save_model(MODEL_PATH)
+        save_training_plot(losses, accuracies, PLOT_PATH)
         print(f"Model saved to {MODEL_PATH}")
+        print(f"Training plot saved to {PLOT_PATH}")
 
     if args.test:
         if not MODEL_PATH.exists():
