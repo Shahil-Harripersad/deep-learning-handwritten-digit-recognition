@@ -86,10 +86,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", action="store_true", help="Train the model and save it.")
     parser.add_argument("--test", action="store_true", help="Load the saved model and test it.")
+    parser.add_argument("--gui", action="store_true", help="Open a drawing window and predict digits.")
     args = parser.parse_args()
 
-    if not args.train and not args.test:
-        parser.error("Use --train or --test.")
+    if not args.train and not args.test and not args.gui:
+        parser.error("Use --train, --test, or --gui.")
+
+    if args.gui:
+        from gui import launch_gui
+
+        launch_gui()
+        return
 
     (x_train, y_train), (x_test, y_test) = load_mnist_data()
     print(f"Training set: {len(x_train)} samples, Test set: {len(x_test)} samples")
