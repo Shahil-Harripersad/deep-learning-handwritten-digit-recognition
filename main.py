@@ -18,7 +18,8 @@ EPOCHS = 10
 INPUT_SIZE = 28 * 28
 HIDDEN_SIZE = 64
 OUTPUT_SIZE = 10
-MODEL_PATH = Path("model.npz")
+MODEL_DIRECTORY = Path("model")
+MODEL_PATH = MODEL_DIRECTORY / "model.npz"
 
 def prepare_inputs(images, labels):
     inputs = []
@@ -98,6 +99,7 @@ def main():
     if args.train:
         training_inputs = prepare_inputs(x_train, y_train)
         train_model(network, training_inputs)
+        MODEL_DIRECTORY.mkdir(exist_ok=True)
         network.save_model(MODEL_PATH)
         print(f"Model saved to {MODEL_PATH}")
 
