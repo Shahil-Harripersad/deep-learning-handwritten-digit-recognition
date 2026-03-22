@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def normalize(image):
@@ -26,7 +25,17 @@ def cross_entropy(y_true, y_pred):
     return -np.sum(y_true * np.log(y_pred))
 
 
+def relu(values):
+    return np.maximum(0, values)
+
+
+def relu_derivative(values):
+    return (values > 0).astype(float)
+
+
 def plot_training_metrics(losses, correct_class_probabilities):
+    import matplotlib.pyplot as plt
+
     epochs = np.arange(1, len(losses) + 1)
 
     plt.figure(figsize=(10, 5))

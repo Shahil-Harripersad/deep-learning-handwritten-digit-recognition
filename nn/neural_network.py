@@ -1,18 +1,12 @@
 import numpy as np
 
-from utils.utils import softmax
-
-
-def relu(values):
-    return np.maximum(0, values)
-
-
-def relu_derivative(values):
-    return (values > 0).astype(float)
-
+from utils.utils import softmax, relu, relu_derivative
 
 class NeuralNetwork:
     def __init__(self, input_size, hidden_size, output_size):
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.output_size = output_size
         self.input_to_hidden_weights = np.random.randn(hidden_size, input_size) * 0.01
         self.hidden_bias = np.zeros(hidden_size)
         self.hidden_to_output_weights = np.random.randn(output_size, hidden_size) * 0.01
@@ -49,3 +43,22 @@ class NeuralNetwork:
         self.hidden_bias = self.hidden_bias - learning_rate * hidden_bias_gradients
 
         return output_probabilities, predicted_label
+
+    def save_model(self, model_path):
+        np.savez(
+            model_path,
+            input_size=self.input_size,
+            hidden_size=self.hidden_size,
+            output_size=self.output_size,
+            input_to_hidden_weights=self.input_to_hidden_weights,
+            hidden_bias=self.hidden_bias,
+            hidden_to_output_weights=self.hidden_to_output_weights,
+            output_bias=self.output_bias,
+        )
+
+    def load_model(self, model_path):
+        saved_model = np.load(model_path)
+        self.input_to_hidden_weights = saved_model["input_to_hidden_weights"]
+        self.hidden_bias = saved_model["hidden_bias"]
+        self.hidden_to_output_weights = saved_model["hidden_to_output_weights"]
+        self.output_bias = saved_model["output_bias"]
