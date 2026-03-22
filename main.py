@@ -1,4 +1,4 @@
-from nn.neural_network import Neuron, Layer
+from nn.neural_network import NeuralNetwork
 from utils.mnist_data_loader import load_mnist_data
 from utils.utils import (
     flatten,
@@ -11,6 +11,9 @@ import numpy as np
 
 LEARNING_RATE = 0.01
 EPOCHS = 10
+INPUT_SIZE = 28 * 28
+HIDDEN_SIZE = 64
+OUTPUT_SIZE = 10
 
 def main():
     # LOAD DATA
@@ -23,9 +26,8 @@ def main():
         normalized_image = normalize(flattened_image)
         inputs.append((normalized_image, label))
 
-    # CREATE LAYER
-    weights = np.random.rand(10, 28 * 28)
-    bias = np.random.rand(10)
+    # CREATE NETWORK
+    network = NeuralNetwork(INPUT_SIZE, HIDDEN_SIZE, OUTPUT_SIZE)
     losses = []
     correct_class_probabilities = []
 
@@ -40,20 +42,10 @@ def main():
             image, label = inputs[index]
             true_labels = one_hot_encode(label)
 
-            layer = Layer(weights, bias)
-            probabilities, prediction = layer.feedforward(image)
+            probabilities, prediction = network.train(image, true_labels, LEARNING_RATE)
             loss = cross_entropy(true_labels, probabilities)
             epoch_loss += loss
             epoch_correct_class_probability += probabilities[label]
-
-            # CALCULATE GRADIENTS
-            error = probabilities - true_labels
-            gradient_weights = np.outer(error, image)
-            gradient_bias = error
-
-            # UPDATE WEIGHTS AND BIAS
-            weights = weights - LEARNING_RATE * gradient_weights
-            bias = bias - LEARNING_RATE * gradient_bias
 
         average_loss = epoch_loss / len(inputs)
         average_correct_class_probability = epoch_correct_class_probability / len(inputs)
