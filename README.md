@@ -12,6 +12,10 @@ This project focuses on understanding **how neural networks actually work under 
 
 
 
+https://github.com/user-attachments/assets/f3142e32-5216-4b9b-9406-39393103ba83
+
+
+
 The model predicts digits in real-time based on user input.
 
 ---
